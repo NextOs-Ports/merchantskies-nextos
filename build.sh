@@ -23,9 +23,9 @@ case $OUTPUT in
     ;;
 esac
 
-NEXTOS_ROOT=${NEXTOS_ROOT:-/mnt/ARQUIVOS/NextOS-Elite-Edition}
+NEXTOS_ROOT=${NEXTOS_ROOT:-}
 NXSR=${NEXTOS_SYSROOT:-}
-if [[ -z $NXSR ]]; then
+if [[ -z $NXSR && -n $NEXTOS_ROOT ]]; then
   # Only a sysroot that actually carries the SDL2/EGL/GLES headers is usable;
   # the newest toolchain directory is not always the complete one.
   while IFS= read -r candidate; do
@@ -36,9 +36,9 @@ if [[ -z $NXSR ]]; then
       -path '*/build.NextOS-Retro-Elite-Edition-Amlogic-old.aarch64-*/toolchain' \
       -print | sort -V
   )
-  [[ -n $NXSR ]] ||
-    fail "set NEXTOS_SYSROOT to a sysroot containing SDL2/EGL/GLES headers"
 fi
+[[ -n $NXSR ]] ||
+  fail "set NEXTOS_SYSROOT to a sysroot containing SDL2/EGL/GLES headers"
 [[ -d $NXSR/usr/include/SDL2 ]] ||
   fail "SDL2 headers are missing below NEXTOS_SYSROOT ($NXSR)"
 

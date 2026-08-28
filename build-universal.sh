@@ -24,9 +24,9 @@ case $OUTPUT in
 esac
 
 if [[ ${MS_BUSTER_IN_CONTAINER:-0} != 1 ]]; then
-  NEXTOS_ROOT=${NEXTOS_ROOT:-/mnt/ARQUIVOS/NextOS-Elite-Edition}
+  NEXTOS_ROOT=${NEXTOS_ROOT:-}
   NEXTOS_SYSROOT=${NEXTOS_SYSROOT:-}
-  if [[ -z $NEXTOS_SYSROOT ]]; then
+  if [[ -z $NEXTOS_SYSROOT && -n $NEXTOS_ROOT ]]; then
     while IFS= read -r candidate; do
       [[ -d $candidate/aarch64-libreelec-linux-gnu/sysroot/usr/include/SDL2 ]] ||
         continue
@@ -36,9 +36,9 @@ if [[ ${MS_BUSTER_IN_CONTAINER:-0} != 1 ]]; then
         -path '*/build.NextOS-Retro-Elite-Edition-Amlogic-old.aarch64-*/toolchain' \
         -print | sort -V
     )
-    [[ -n $NEXTOS_SYSROOT ]] ||
-      fail "set NEXTOS_SYSROOT to a read-only sysroot containing SDL2/EGL/GLES headers"
   fi
+  [[ -n $NEXTOS_SYSROOT ]] ||
+    fail "set NEXTOS_SYSROOT to a read-only sysroot containing SDL2/EGL/GLES headers"
   [[ -d $NEXTOS_SYSROOT/usr/include/SDL2 ]] ||
     fail "SDL2 headers are missing below NEXTOS_SYSROOT"
   command -v docker >/dev/null 2>&1 || fail "docker is required for the public build"
